@@ -1,58 +1,105 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="UTF-8">
-    <title>Note.ovh</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#157878">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="css/normalize.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="css/cayman.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="css/github-light.css" media="screen">
-  </head>
-  <body>
-    <section class="page-header">
-      <h1 class="project-name">Note.ovh</h1>
-      <h2 class="project-tagline">Take notes in a hurry with Note.ovh browser extension. Scroll down to see how to get it.</h2>
-      
-       <a href="https://documentation.swivro.net/2021/04/08/getting-the-note-ovh-chrome-extension/" class="btn">Get it for Chrome</a>
-      <a href="https://addons.mozilla.org/en-US/firefox/addon/note-ovh/" class="btn">Get it for FireFox</a>
-      <!-- <a href="#" class="btn"><strike>Mobile</strike> (COMING SOON)</a> -->
-    </section>
+<html lang="en">
+<head>
+  <!-- NO COOKIES. WE DON'T TRACK YOU. -->
+  <meta charset="UTF-8">
+  <title>Contenteditable space: super simple and free note taking web app</title>
+  <meta name="description" content="Minimalist, secure, in-browser note taking app. Take a quick note or use quick-edit text. It uses HTML element contenteditable technology. Auto saves to localstorage.">
+  <link rel="icon" type="image/png" href="https://i.imgur.com/NZrLr3H.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Viacheslav Starikov, https://twitter.com/s_starikov">
+  <style>
+    html {
+      height: 100%;
+    }
 
-    <section class="main-content">
-      
-      <br />
-      <img src = "https://swivro.net/discover/wp-content/uploads/2021/04/Screenshot_466-1024x776.png">
-      <br />
-      
+    body {
+      font: 18px/1.5 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin: 0;
+      min-height: 100%;
+    }
 
-<h1>
-<a id="header-1" class="anchor" href="#header-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>For Google Chrome</h1>
+    [contenteditable] {
+      box-sizing: border-box;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    
+    [contenteditable]:focus {
+      outline: 0 solid transparent;
+    }
 
-      <p>Get the extension in 5 simple steps, <a href = "https://documentation.swivro.net/2021/04/08/getting-the-note-ovh-chrome-extension/">by following this guide.</a></p>
-      
-      <h1>
-<a id="header-1" class="anchor" href="#header-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>For Microsoft Edge</h1>
-<p>Note.ovh will soon be available in the Microsoft Edge Extension Store for free. Check back soon!</p>
+    [contenteditable]:empty:before {
+      color: rgba(0, 0, 0, .33);
+      content: 'Click and start taking notes';
+      display: block;
+      font-size: 1.5rem;
+      left: 50%;
+      pointer-events: none;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+  
+  <!--
+  If you don't like this service but want something similar,
+  just copy and paste this one line to your browser:
+  data:text/html, <html contenteditable>
+  -->
+</head>
+<body>
+<div contenteditable></div>
+<script>
+  console.log('%cWelcome to contenteditable.space!',
+    'font-weight: bold; font-size: 2em;');
+  console.log('%cYou can take quick notes here which are saved automatically to localstorage.',
+    'color: gray; font-weight: bold; font-size: 2em;');
+  console.log('%cOr you can use it as a simple text editor to copy/paste -> edit -> copy/paste.',
+    'color: gray; font-weight: bold; font-size: 2em;');
 
-      
-            <h1>
-<a id="header-1" class="anchor" href="#header-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>For Firefox</h1>
-<p>Note.ovh is available on Firefox on the add-on store for free. Click <a href = "https://addons.mozilla.org/en-US/firefox/addon/note-ovh/">here</a> to visit the add-on page on the Mozilla FireFox Extension Store.</p>
-      
-      <h1>
-<a id="header-1" class="anchor" href="#header-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>For a different chrome-based browser</h1>
-<p>For Chromium-based browsers like Avast Secure Browser, Opera, or more, follow the same steps that you would use for Chrome listed above on this page.</p>
+  var contentEditableElement = document.querySelector('[contenteditable]');
+  var localStorageKey = 'contenteditable';
+  var debounceTimeout = 1000;
 
+  function load() {
+    var saved = localStorage.getItem(localStorageKey);
 
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://note.ovh">Note.ovh</a> is maintained by <a href="https://swivro.net">Swivro</a>.</span>
+    if (saved) {
+      contentEditableElement.innerHTML = saved;
+      console.log('Your content just loaded from localstorage.')
+    }
+  }
 
-        <span class="site-footer-credits">This page is hosted by <a href="https://pages.github.com">GitHub</a></span>
-      </footer>
+  function save() {
+    var html = contentEditableElement.innerHTML;
 
-    </section>
-  </body>
+    localStorage.setItem(localStorageKey, html);
+    console.log('Your content just saved to localstorage.');
+  }
+
+  function debounced(delay, fn) {
+    var timerId;
+
+    return function () {
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+
+      timerId = setTimeout(function () {
+        fn();
+        timerId = null;
+      }, delay);
+    }
+  }
+
+  var debouncedSave = debounced(debounceTimeout, save);
+
+  load();
+
+  contentEditableElement.addEventListener('input', function() {
+    debouncedSave();
+  }, false);
+</script>
+</body>
 </html>
-
