@@ -3,7 +3,7 @@
 <head>
   <!-- NO COOKIES. WE DON'T TRACK YOU. -->
   <meta charset="UTF-8">
-  <title>Contenteditable space: super simple and free note taking web app</title>
+  <title>Note.ovh</title>
   <meta name="description" content="Minimalist, secure, in-browser note taking app. Take a quick note or use quick-edit text. It uses HTML element contenteditable technology. Auto saves to localstorage.">
   <link rel="icon" type="image/png" href="https://i.imgur.com/NZrLr3H.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,7 +31,7 @@
 
     [contenteditable]:empty:before {
       color: rgba(0, 0, 0, .33);
-      content: 'Click and start taking notes';
+      content: 'Click and start taking notes. Everything is saved automatically on this page. Feel free to close this page (or your browser) and come back to it later.';
       display: block;
       font-size: 1.5rem;
       left: 50%;
@@ -51,7 +51,7 @@
 <body>
 <div contenteditable></div>
 <script>
-  console.log('%cWelcome to contenteditable.space!',
+  console.log('%cWelcome to Note.ovh!',
     'font-weight: bold; font-size: 2em;');
   console.log('%cYou can take quick notes here which are saved automatically to localstorage.',
     'color: gray; font-weight: bold; font-size: 2em;');
